@@ -3,284 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TinyBites - Premium Baby Tracker</title>
+    <title>TinyBites - Gold Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #F2F2F7; --card: #FFFFFF; --text: #000000;
-            --accent: #007AFF; --gray: #8E8E93; --border: #C6C6C8;
+            --bg: #F8F9FB; --card: #FFFFFF; --text: #1C1C1E;
+            --accent: #007AFF; --gray: #8E8E93; --border: #E5E5EA;
+            --cat-veg: #E3F2ED; --cat-veg-t: #378F76;
+            --cat-fruit: #FCE6E6; --cat-fruit-t: #A13D3D;
+            --cat-grain: #FAF2E3; --cat-grain-t: #91683A;
+            --cat-meat: #F5EAE6; --cat-meat-t: #945842;
+            --cat-fish: #E6EEF5; --cat-fish-t: #4F7094;
+            --cat-dairy: #EDEBF5; --cat-dairy-t: #625E91;
+            --cat-herb: #F0F5E6; --cat-herb-t: #6B804D;
+            --cat-other: #FDF9E6; --cat-other-t: #A3934F;
         }
         [data-theme="dark"] {
-            --bg: #000000; --card: #1C1C1E; --text: #FFFFFF;
-            --accent: #0A84FF; --gray: #8E8E93; --border: #38383A;
+            --bg: #000000; --card: #1C1C1E; --text: #FFFFFF; --border: #38383A;
+            --cat-veg: #1A2E28; --cat-fruit: #331F1F; --cat-grain: #2E261D;
+            --cat-meat: #2E211D; --cat-fish: #1D242E; --cat-dairy: #22202E;
+            --cat-herb: #242E1D; --cat-other: #2E2B1D;
         }
         
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: 0.3s; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: 0.3s; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 10px; }
-        .controls { display: flex; gap: 12px; }
-        .icon-btn { background: var(--card); border: none; width: 42px; height: 42px; border-radius: 14px; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        /* Шапка */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 25px 20px 15px; }
+        .app-logo { font-size: 30px; font-weight: 900; letter-spacing: -1.5px; margin: 0; background: linear-gradient(135deg, #007AFF 0%, #00C7E2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+        .heart-btn { font-size: 24px; cursor: pointer; transition: 0.3s; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        .ctrl-btn { background: var(--card); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 12px; cursor: pointer; color: var(--text); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
         #main-page, #list-page, #detail-page, #profile-page { padding: 0 20px 40px; }
-        .app-logo { font-size: 34px; font-weight: 900; letter-spacing: -1.5px; margin: 0; }
 
-        .baby-card { background: var(--card); border-radius: 30px; padding: 20px; margin: 20px 0; display: flex; align-items: center; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); cursor: pointer; }
-        .baby-photo { width: 85px; height: 85px; border-radius: 25px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 45px; }
-        .baby-info h2 { margin: 0; font-size: 22px; font-weight: 850; }
-        .stat-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-        .stat-tag { background: var(--accent); color: white; padding: 4px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+        /* Карточка профиля */
+        .baby-card { background: var(--card); border-radius: 28px; padding: 18px; margin: 10px 0; display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); cursor: pointer; }
+        .baby-photo-frame { width: 70px; height: 70px; border-radius: 50%; background: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid var(--accent); position: relative; }
+        .baby-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .baby-photo-frame span { font-size: 35px; }
+        .stat-tag { background: rgba(0,122,255,0.08); color: var(--accent); padding: 4px 10px; border-radius: 10px; font-size: 11px; font-weight: 800; }
 
-        /* Категории */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .cat-card { height: 160px; border-radius: 35px; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
-        .cat-card:active { transform: scale(0.95); }
-        .cat-icon { font-size: 50px; margin-bottom: 8px; }
-        .cat-name { font-size: 16px; font-weight: 900; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        /* История на главном экране */
+        .home-history { margin: 20px 0 25px; }
+        .section-title { font-size: 13px; font-weight: 900; color: var(--gray); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .history-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .history-scroll::-webkit-scrollbar { display: none; }
+        .history-chip { background: var(--card); padding: 12px 16px; border-radius: 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border); }
+
+        /* Сетка категорий */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .cat-card { height: 140px; border-radius: 30px; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: 0 8px 20px rgba(0,0,0,0.04); }
+        .cat-icon { font-size: 42px; margin-bottom: 6px; }
+        .cat-name { font-size: 12px; font-weight: 800; text-align: center; padding: 0 8px; line-height: 1.2; }
         
-        .cat-Veg { background: linear-gradient(135deg, #34C759, #248A3D); }
-        .cat-Fruit { background: linear-gradient(135deg, #FF2D55, #D30030); }
-        .cat-Grain { background: linear-gradient(135deg, #FF9500, #E67600); }
-        .cat-Meat { background: linear-gradient(135deg, #FF3B30, #C41E14); }
-        .cat-Fish { background: linear-gradient(135deg, #5856D6, #3E3BBD); }
-        .cat-Dairy { background: linear-gradient(135deg, #007AFF, #0056B3); }
-        .cat-Herb { background: linear-gradient(135deg, #AFEF2F, #7EBD00); }
-        .cat-Other { background: linear-gradient(135deg, #FFCC00, #D1A700); }
+        .cat-Veg { background: var(--cat-veg); color: var(--cat-veg-t); }
+        .cat-Fruit { background: var(--cat-fruit); color: var(--cat-fruit-t); }
+        .cat-Grain { background: var(--cat-grain); color: var(--cat-grain-t); }
+        .cat-Meat { background: var(--cat-meat); color: var(--cat-meat-t); }
+        .cat-Fish { background: var(--cat-fish); color: var(--cat-fish-t); }
+        .cat-Dairy { background: var(--cat-dairy); color: var(--cat-dairy-t); }
+        .cat-Herb { background: var(--cat-herb); color: var(--cat-herb-t); }
+        .cat-Other { background: var(--cat-other); color: var(--cat-other-t); }
 
-        /* Список */
-        .item-list { background: var(--card); border-radius: 25px; overflow: hidden; margin-top: 15px; }
-        .item { display: flex; align-items: center; padding: 20px; border-bottom: 0.5px solid var(--border); cursor: pointer; }
-        .item:last-child { border-bottom: none; }
-        .item-emoji { font-size: 28px; margin-right: 15px; }
-        .item-name { flex: 1; font-size: 18px; font-weight: 700; }
+        /* Списки */
+        .item-list { background: var(--card); border-radius: 24px; overflow: hidden; margin-top: 15px; border: 1px solid var(--border); }
+        .item { display: flex; align-items: center; padding: 16px 20px; border-bottom: 0.5px solid var(--border); }
+        .item-content { flex: 1; display: flex; align-items: center; cursor: pointer; }
+        .item-emoji { font-size: 24px; margin-right: 12px; }
+        .item-name { font-size: 16px; font-weight: 700; }
+        .del-btn { color: #FF3B30; padding: 10px; font-size: 18px; cursor: pointer; opacity: 0.2; transition: 0.2s; }
+        .del-btn:hover { opacity: 1; }
+        
+        /* Добавление */
+        .add-box { background: var(--card); padding: 15px; border-radius: 20px; margin-top: 15px; display: flex; gap: 10px; border: 1px dashed var(--accent); }
+        .add-input { flex: 1; border: none; background: transparent; font-family: inherit; font-weight: 600; outline: none; color: var(--text); }
 
-        /* Детали */
-        .reac-row { display: flex; gap: 10px; margin: 15px 0 20px; }
-        .reac-btn { flex: 1; height: 60px; border-radius: 18px; border: 2px solid transparent; background: var(--bg); font-size: 28px; cursor: pointer; }
+        .reac-row { display: flex; gap: 8px; margin: 15px 0 20px; }
+        .reac-btn { flex: 1; height: 50px; border-radius: 14px; border: 2px solid transparent; background: var(--bg); font-size: 24px; cursor: pointer; }
         .reac-btn.active { border-color: var(--accent); background: var(--card); }
 
-        .history-card { background: var(--card); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--accent); }
-        .h-reac { font-size: 30px; }
-        .h-date { font-weight: 800; color: var(--accent); font-size: 14px; }
-        .h-note { font-size: 13px; opacity: 0.8; margin-top: 2px; }
-
-        .btn-main { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 20px; width: 100%; font-size: 18px; font-weight: 800; cursor: pointer; }
-        .back-nav { color: var(--accent); font-size: 18px; font-weight: 700; margin: 20px 0; display: inline-block; cursor: pointer; }
+        .btn-main { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 20px; width: 100%; font-size: 17px; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .back-nav { color: var(--accent); font-size: 17px; font-weight: 700; margin: 15px 0; display: inline-block; cursor: pointer; }
         
-        input, select, textarea { background: var(--card); color: var(--text); border: 1.5px solid var(--border); padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box; font-size: 16px; font-family: inherit; margin-bottom: 15px; }
-        label { font-size: 11px; font-weight: 800; color: var(--gray); text-transform: uppercase; margin-left: 5px; }
+        input, select, textarea { background: var(--card); color: var(--text); border: 1.5px solid var(--border); padding: 14px; border-radius: 14px; width: 100%; box-sizing: border-box; font-size: 16px; margin-bottom: 12px; font-family: inherit; }
+        label { font-size: 11px; font-weight: 900; color: var(--gray); text-transform: uppercase; margin-bottom: 5px; display: block; margin-left: 5px; }
+
+        /* Уведомление "Я тебя люблю" */
+        .love-toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #FF2D55; color: white; padding: 12px 25px; border-radius: 30px; font-weight: 800; z-index: 1000; box-shadow: 0 10px 20px rgba(255,45,85,0.3); display: none; animation: slideDown 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        @keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 30px; opacity: 1; } }
     </style>
 </head>
-<body data-theme="light">
+<body>
 
-<div class="top-bar">
+<div id="love-toast" class="love-toast">Я тебя люблю! ❤️</div>
+
+<div class="header">
     <h1 class="app-logo">TinyBites</h1>
-    <div class="controls">
-        <button class="icon-btn" onclick="toggleTheme()" id="theme-icon">🌙</button>
+    <div class="header-actions">
+        <div class="heart-btn" onclick="sayLove()">❤️</div>
+        <button class="ctrl-btn" onclick="toggleTheme()" id="t-btn">🌙</button>
+        <button class="ctrl-btn" onclick="nextLang()" id="l-btn">RU</button>
     </div>
 </div>
 
 <div id="main-page">
     <div class="baby-card" onclick="openProfile()">
-        <div id="disp-photo" class="baby-photo">👦</div>
+        <div class="baby-photo-frame" id="photo-frame">
+            <span id="d-emoji">👦</span>
+        </div>
         <div class="baby-info">
-            <h2 id="disp-name">Bubuzik</h2>
+            <h2 id="d-name" style="margin:0; font-size:20px; font-weight:850;">Bubuzik</h2>
             <div class="stat-row">
-                <span class="stat-tag" id="disp-age">0 мес.</span>
-                <span class="stat-tag" id="disp-weight">0 кг</span>
-                <span class="stat-tag" id="disp-height">0 см</span>
+                <span class="stat-tag" id="d-age">0 мес</span>
+                <span class="stat-tag" id="d-weight">0 кг</span>
+                <span class="stat-tag" id="d-height">0 см</span>
             </div>
         </div>
     </div>
+
+    <div class="home-history">
+        <div class="section-title">История питания</div>
+        <div class="history-scroll" id="main-history-list">
+            </div>
+    </div>
+
     <div class="grid" id="cat-grid"></div>
 </div>
 
 <div id="list-page" style="display:none">
     <div class="back-nav" onclick="showMain()">❮ Назад</div>
-    <h1 id="cat-title" style="font-weight:900;"></h1>
-    <div class="item-list" id="main-list"></div>
+    <h1 id="l-title" style="font-weight:900;"></h1>
+    
+    <div class="add-box">
+        <input type="text" id="new-food-input" class="add-input" placeholder="+ Добавить свой продукт">
+        <button class="ctrl-btn" onclick="manualAdd()" style="width: 35px; height: 35px; font-size: 14px;">OK</button>
+    </div>
+
+    <div class="item-list" id="l-list"></div>
 </div>
 
 <div id="detail-page" style="display:none">
     <div class="back-nav" onclick="closeDetail()">❮ Назад</div>
-    <h2 id="food-name" style="font-size:30px; font-weight:900; margin-bottom:20px;"></h2>
-    
-    <label>Дата кормления</label>
-    <input type="date" id="cal-date">
-    
+    <h2 id="f-name" style="font-size:28px; font-weight:900;"></h2>
+    <label>Дата кормления</label><input type="date" id="f-date">
     <label>Реакция</label>
     <div class="reac-row">
-        <button class="reac-btn" onclick="setReac('🤮')" id="reac-🤮">🤮</button>
-        <button class="reac-btn" onclick="setReac('😐')" id="reac-😐">😐</button>
-        <button class="reac-btn" onclick="setReac('😊')" id="reac-😊">😊</button>
-        <button class="reac-btn" onclick="setReac('🤩')" id="reac-🤩">🤩</button>
+        <button class="reac-btn" onclick="setR('🔴')" id="r-🔴">🔴</button>
+        <button class="reac-btn" onclick="setR('🟡')" id="r-🟡">🟡</button>
+        <button class="reac-btn" onclick="setR('🟢')" id="r-🟢">🟢</button>
+        <button class="reac-btn" onclick="setR('✨')" id="r-✨">✨</button>
     </div>
-
-    <label>Комментарий</label>
-    <textarea id="food-note" placeholder="Как всё прошло?"></textarea>
-    <button class="btn-main" onclick="saveEntry()">Записать в дневник</button>
-
-    <h3 style="font-weight:900; margin-top:30px;">История</h3>
-    <div id="food-history"></div>
+    <label>Заметка</label>
+    <textarea id="f-note" placeholder="Как все прошло?"></textarea>
+    <button class="btn-main" onclick="saveE()">Записать день</button>
+    <h3 style="font-weight:900; margin-top:25px;">История продукта</h3>
+    <div id="f-hist"></div>
 </div>
 
 <div id="profile-page" style="display:none">
     <div class="back-nav" onclick="showMain()">❮ Назад</div>
     <h1 style="font-weight:900">Профиль</h1>
-    <label>Имя</label><input type="text" id="in-name">
-    <label>Пол</label>
-    <select id="in-gender">
-        <option value="boy">Мальчик 👦</option>
-        <option value="girl">Девочка 👧</option>
-    </select>
-    <label>Вес (кг)</label><input type="number" id="in-weight">
-    <label>Рост (см)</label><input type="number" id="in-height">
-    <label>Дата рождения</label><input type="date" id="in-birth">
-    <button class="btn-main" onclick="saveProfile()">Сохранить профиль</button>
+    
+    <label>Фотография</label>
+    <input type="file" id="p-img" accept="image/*" style="padding: 10px; border: 1px dashed var(--accent);">
+    
+    <label>Имя</label><input type="text" id="p-name">
+    <label>Пол</label><select id="p-gen"><option value="boy">👦 Мальчик</option><option value="girl">👧 Девочка</option></select>
+    <label>Вес (кг)</label><input type="number" id="p-w">
+    <label>Рост (см)</label><input type="number" id="p-h">
+    <label>Дата рождения</label><input type="date" id="p-b">
+    <button class="btn-main" onclick="saveP()">Сохранить изменения</button>
 </div>
 
 <script>
-    const PRODUCTS = {
-        'Veg': [{id:'v1',ru:'Кабачок',img:'🥒'},{id:'v2',ru:'Брокколи',img:'🥦'},{id:'v3',ru:'Цв. капуста',img:'🥗'},{id:'v4',ru:'Морковь',img:'🥕'},{id:'v5',ru:'Тыква',img:'🎃'},{id:'v6',ru:'Картофель',img:'🥔'},{id:'v7',ru:'Свекла',img:'🍅'},{id:'v8',ru:'Горошек',img:'🫛'},{id:'v9',ru:'Перец',img:'🫑'}],
-        'Fruit': [{id:'f1',ru:'Яблоко',img:'🍎'},{id:'f2',ru:'Груша',img:'🍐'},{id:'f3',ru:'Банан',img:'🍌'},{id:'f4',ru:'Абрикос',img:'🍑'},{id:'f5',ru:'Черника',img:'🫐'},{id:'f6',ru:'Чернослив',img:'🍇'}],
-        'Grain': [{id:'g1',ru:'Рис',img:'🍚'},{id:'g2',ru:'Гречка',img:'🥣'},{id:'g3',ru:'Кукуруза',img:'🌽'},{id:'g4',ru:'Овсянка',img:'🌾'},{id:'g5',ru:'Киноа',img:'🥗'}],
-        'Meat': [{id:'m1',ru:'Индейка',img:'🦃'},{id:'m2',ru:'Кролик',img:'🐇'},{id:'m3',ru:'Говядина',img:'🥩'},{id:'m4',ru:'Цыпленок',img:'🍗'}],
-        'Dairy': [{id:'d1',ru:'Творог',img:'🍧'},{id:'d2',ru:'Йогурт',img:'🍦'},{id:'d3',ru:'Кефир',img:'🥛'}],
-        'Fish': [{id:'s1',ru:'Треска',img:'🐟'},{id:'s2',ru:'Лосось',img:'🍣'}],
-        'Herb': [{id:'h1',ru:'Укроп',img:'🌿'},{id:'h2',ru:'Шпинат',img:'🍃'}],
-        'Other': [{id:'o1',ru:'Желток',img:'🍳'},{id:'o2',ru:'Масло',img:'🫗'}]
-    };
-
     const CATS = [
-        {id:'Veg', n:'Овощи', i:'🥦'}, {id:'Fruit', n:'Фрукты', i:'🍎'}, {id:'Grain', n:'Каши', i:'🌾'},
-        {id:'Meat', n:'Мясо', i:'🥩'}, {id:'Fish', n:'Рыба', i:'🐟'}, {id:'Dairy', n:'Молочка', i:'🥛'},
-        {id:'Herb', n:'Зелень', i:'🌿'}, {id:'Other', n:'Прочее', i:'🍳'}
+        {id:'Veg', RU:'Овощи', i:'🥦'}, {id:'Fruit', RU:'Фрукты', i:'🍎'}, {id:'Grain', RU:'Крупы', i:'🌾'},
+        {id:'Meat', RU:'Мясо и мясопродукты', i:'🥩'}, {id:'Fish', RU:'Рыба и морепродукты', i:'🐟'},
+        {id:'Dairy', RU:'Молочные продукты', i:'🥛'}, {id:'Herb', RU:'Зелень', i:'🌿'}, {id:'Other', RU:'Масла, орехи и прочее', i:'🥜'}
     ];
 
-    let db = JSON.parse(localStorage.getItem('tb_db_v21')) || {};
-    let prof = JSON.parse(localStorage.getItem('tb_prof_v21')) || {name:'Bubuzik', w:9, h:72, b:'2025-06-01', g:'boy'};
-    let curFood = '', curReac = '', activeCat = '';
-
-    window.onload = () => {
-        renderCats();
-        updateProf();
-        if(localStorage.getItem('theme') === 'dark') toggleTheme(true);
+    const DEFAULT_FOODS = {
+        'Veg': [{id:'v1',RU:'Кабачок',e:'🥒'},{id:'v2',RU:'Брокколи',e:'🥦'},{id:'v3',RU:'Цветная капуста',e:'🥗'},{id:'v4',RU:'Морковь',e:'🥕'},{id:'v5',RU:'Тыква',e:'🎃'},{id:'v6',RU:'Картофель',e:'🥔'},{id:'v7',RU:'Батат',e:'🍠'},{id:'v8',RU:'Горошек',e:'🟢'},{id:'v9',RU:'Стручковая фасоль',e:'🌱'},{id:'v10',RU:'Кукуруза',e:'🌽'},{id:'v11',RU:'Пастернак',e:'🥕'},{id:'v12',RU:'Кольраби',e:'🥬'},{id:'v13',RU:'Сельдерей',e:'🥬'},{id:'v14',RU:'Свекла',e:'🍅'},{id:'v15',RU:'Баклажан',e:'🍆'},{id:'v16',RU:'Болгарский перец',e:'🫑'},{id:'v17',RU:'Помидор',e:'🍅'},{id:'v18',RU:'Огурец',e:'🥒'},{id:'v19',RU:'Брюссельская капуста',e:'🥬'},{id:'v20',RU:'Белокочанная капуста',e:'🥬'}],
+        'Fruit': [{id:'f1',RU:'Яблоко',e:'🍎'},{id:'f2',RU:'Груша',e:'🍐'},{id:'f3',RU:'Банан',e:'🍌'},{id:'f4',RU:'Черника',e:'🫐'},{id:'f5',RU:'Персик',e:'🍑'},{id:'f6',RU:'Абрикос',e:'🍑'},{id:'f7',RU:'Чернослив',e:'🟣'},{id:'f8',RU:'Авокадо',e:'🥑'},{id:'f9',RU:'Манго',e:'🥭'},{id:'f10',RU:'Клубника',e:'🍓'},{id:'f11',RU:'Малина',e:'🍧'},{id:'f12',RU:'Ежевика',e:'🍇'},{id:'f13',RU:'Дыня',e:'🍈'},{id:'f14',RU:'Арбуз',e:'🍉'},{id:'f15',RU:'Киви',e:'🥝'},{id:'f16',RU:'Ананас',e:'🍍'},{id:'f17',RU:'Слива',e:'🍑'},{id:'f18',RU:'Вишня',e:'🍒'},{id:'f19',RU:'Нектарин',e:'🍑'},{id:'f20',RU:'Голубика',e:'🫐'}],
+        'Grain': [{id:'g1',RU:'Рис',e:'🍚'},{id:'g2',RU:'Гречка',e:'🥣'},{id:'g3',RU:'Кукурузная крупа',e:'🌽'},{id:'g4',RU:'Овсянка',e:'🌾'},{id:'g5',RU:'Пшено',e:'🥣'},{id:'g6',RU:'Киноа',e:'🥣'},{id:'g7',RU:'Полента',e:'🌽'},{id:'g8',RU:'Полба',e:'🌾'},{id:'g9',RU:'Булгур',e:'🌾'},{id:'g10',RU:'Манка',e:'🥣'}],
+        'Meat': [{id:'m1',RU:'Индейка',e:'🦃'},{id:'m2',RU:'Кролик',e:'🐇'},{id:'m3',RU:'Цыпленок',e:'🍗'},{id:'m4',RU:'Телятина',e:'🥩'},{id:'m5',RU:'Говядина',e:'🥩'},{id:'m6',RU:'Перепелка',e:'🐦'},{id:'m7',RU:'Ягненок',e:'🐑'},{id:'m8',RU:'Конина',e:'🥩'}],
+        'Fish': [{id:'s1',RU:'Треска',e:'🐟'},{id:'s2',RU:'Хек',e:'🐟'},{id:'s3',RU:'Минтай',e:'🐟'},{id:'s4',RU:'Лосось',e:'🍣'},{id:'s5',RU:'Форель',e:'🐟'},{id:'s6',RU:'Сибас',e:'🐟'},{id:'s7',RU:'Дорадо',e:'🐟'},{id:'s8',RU:'Камбала',e:'🐟'},{id:'s9',RU:'Окунь',e:'🐟'},{id:'s10',RU:'Креветки',e:'🍤'}],
+        'Dairy': [{id:'d1',RU:'Творог',e:'🍧'},{id:'d2',RU:'Кефир',e:'🥛'},{id:'d3',RU:'Биолакт',e:'🍼'},{id:'d4',RU:'Йогурт',e:'🍦'},{id:'d5',RU:'Сыр мягкий',e:'🧀'},{id:'d6',RU:'Сливки',e:'🥛'},{id:'d7',RU:'Сливочное масло',e:'🧈'},{id:'d8',RU:'Рикотта',e:'🧀'},{id:'d9',RU:'Козий сыр',e:'🧀'},{id:'d10',RU:'Сметана',e:'🥛'}],
+        'Herb': [{id:'h1',RU:'Укроп',e:'🌿'},{id:'h2',RU:'Петрушка',e:'🌱'},{id:'h3',RU:'Шпинат',e:'🍃'},{id:'h4',RU:'Базилик',e:'🌿'},{id:'h5',RU:'Салат',e:'🥬'},{id:'h6',RU:'Кинза',e:'🌿'}],
+        'Other': [{id:'o1',RU:'Желток',e:'🍳'},{id:'o2',RU:'Оливковое масло',e:'🫗'},{id:'o3',RU:'Подсолнечное масло',e:'🌻'},{id:'o4',RU:'Льняное масло',e:'🫗'},{id:'o5',RU:'Арахисовая паста',e:'🥜'},{id:'o6',RU:'Грецкий орех',e:'🧠'}]
     };
 
-    function toggleTheme(init = false) {
-        const body = document.body;
-        if(init || body.getAttribute('data-theme') !== 'dark') {
-            body.setAttribute('data-theme', 'dark');
-            document.getElementById('theme-icon').innerText = '☀️';
-            localStorage.setItem('theme', 'dark');
-        } else {
-            body.setAttribute('data-theme', 'light');
-            document.getElementById('theme-icon').innerText = '🌙';
-            localStorage.setItem('theme', 'light');
-        }
+    let curL = localStorage.getItem('tb_l_v13') || 'RU';
+    let dark = localStorage.getItem('tb_d_v13') === 'true';
+    let db = JSON.parse(localStorage.getItem('tb_db_v13')) || {};
+    let prof = JSON.parse(localStorage.getItem('tb_pr_v13')) || {name:'Bubuzik', w:9, h:72, b:'2025-06-01', g:'boy', img:''};
+    let foods = JSON.parse(localStorage.getItem('tb_f_v13')) || DEFAULT_FOODS;
+    let curF='', curR='', actC='';
+
+    window.onload = () => { applyTheme(); applyL(); updateP(); renderHomeHistory(); };
+
+    function sayLove() {
+        const t = document.getElementById('love-toast');
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 2500);
     }
+
+    function toggleTheme() { dark = !dark; localStorage.setItem('tb_d_v13', dark); applyTheme(); }
+    function applyTheme() { document.body.setAttribute('data-theme', dark ? 'dark' : 'light'); document.getElementById('t-btn').innerText = dark ? '☀️' : '🌙'; }
+
+    function nextLang() { 
+        curL = curL === 'RU' ? 'EN' : (curL === 'EN' ? 'AZ' : 'RU'); 
+        localStorage.setItem('tb_l_v13', curL); applyL(); 
+    }
+
+    function applyL() { document.getElementById('l-btn').innerText = curL; renderCats(); }
 
     function renderCats() {
         document.getElementById('cat-grid').innerHTML = CATS.map(c => `
-            <div class="cat-card cat-${c.id}" onclick="openCat('${c.id}')">
+            <div class="cat-card cat-${c.id}" onclick="openC('${c.id}')">
                 <span class="cat-icon">${c.i}</span>
-                <span class="cat-name">${c.n}</span>
+                <span class="cat-name">${c.RU}</span>
             </div>`).join('');
     }
 
-    function openCat(id) {
-        activeCat = id;
-        document.getElementById('main-page').style.display='none';
-        document.getElementById('list-page').style.display='block';
-        document.getElementById('cat-title').innerText = CATS.find(c => c.id === id).n;
-        document.getElementById('main-list').innerHTML = PRODUCTS[id].map(p => `
-            <div class="item" onclick="openDetail('${p.id}', '${p.ru}')">
-                <span class="item-emoji">${p.img}</span>
-                <span class="item-name">${p.ru}</span>
-                <span style="font-weight:800; color:var(--accent)">${db[p.id] ? db[p.id].length : 0}д</span>
-            </div>`).join('');
+    function renderHomeHistory() {
+        const hist = [];
+        for(let id in db) {
+            db[id].forEach(e => hist.push({...e, id, name: findFoodName(id)}));
+        }
+        hist.sort((a,b) => new Date(b.ts) - new Date(a.ts));
+        const last = hist.slice(0, 5);
+        document.getElementById('main-history-list').innerHTML = last.length ? last.map(h => `
+            <div class="history-chip" onclick="openD('${h.id}', '${h.name}')">
+                <span>${h.r}</span>
+                <span style="font-weight:700; font-size:13px;">${h.name}</span>
+            </div>
+        `).join('') : '<div style="opacity:0.4; font-size:12px; padding:10px;">История пуста</div>';
     }
 
-    function openDetail(id, name) {
-        curFood = id; curReac = '';
-        document.getElementById('list-page').style.display='none';
-        document.getElementById('detail-page').style.display='block';
-        document.getElementById('food-name').innerText = name;
-        document.getElementById('cal-date').valueAsDate = new Date();
-        document.getElementById('food-note').value = '';
-        document.querySelectorAll('.reac-btn').forEach(b => b.classList.remove('active'));
-        renderFoodHistory();
+    function findFoodName(id) {
+        for(let c in foods) {
+            let f = foods[c].find(i => i.id === id);
+            if(f) return f.RU;
+        }
+        return '???';
     }
 
-    function setReac(r) {
-        curReac = r;
-        document.querySelectorAll('.reac-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('reac-'+r).classList.add('active');
+    function openC(id) {
+        actC = id; document.getElementById('main-page').style.display='none'; document.getElementById('list-page').style.display='block';
+        document.getElementById('l-title').innerText = CATS.find(c=>c.id===id).RU;
+        renderFoodList();
     }
 
-    function saveEntry() {
-        if(!curReac) return alert('Выберите реакцию!');
-        if(!db[curFood]) db[curFood] = [];
-        const date = new Date(document.getElementById('cal-date').value).toLocaleDateString('ru', {day:'numeric', month:'short'});
-        db[curFood].unshift({ date, reac: curReac, note: document.getElementById('food-note').value });
-        localStorage.setItem('tb_db_v21', JSON.stringify(db));
-        renderFoodHistory();
-    }
-
-    function renderFoodHistory() {
-        const cont = document.getElementById('food-history');
-        cont.innerHTML = (db[curFood] || []).map(h => `
-            <div class="history-card">
-                <div class="h-reac">${h.reac}</div>
-                <div class="h-info">
-                    <div class="h-date">${h.date}</div>
-                    <div class="h-note">${h.note || 'Без заметок'}</div>
+    function renderFoodList() {
+        document.getElementById('l-list').innerHTML = foods[actC].map(f => `
+            <div class="item">
+                <div class="item-content" onclick="openD('${f.id}','${f.RU}')">
+                    <span class="item-emoji">${f.e || '🥣'}</span>
+                    <span class="item-name">${f.RU}</span>
+                    <span style="margin-left:8px; font-weight:800; color:var(--accent); font-size:11px;">${db[f.id]?db[f.id].length:0}д</span>
                 </div>
+                <div class="del-btn" onclick="deleteItem('${f.id}')">✕</div>
             </div>`).join('');
     }
 
-    function updateProf() {
-        document.getElementById('disp-name').innerText = prof.name;
-        document.getElementById('disp-weight').innerText = prof.w + ' кг';
-        document.getElementById('disp-height').innerText = prof.h + ' см';
-        document.getElementById('disp-photo').innerText = prof.g === 'boy' ? '👦' : '👧';
-        const months = Math.floor((new Date() - new Date(prof.b)) / (1000*60*60*24*30.44));
-        document.getElementById('disp-age').innerText = months + ' мес.';
+    function manualAdd() {
+        const val = document.getElementById('new-food-input').value;
+        if(!val) return;
+        const newId = 'm_' + Date.now();
+        foods[actC].push({id: newId, RU: val, e: '🥣'});
+        localStorage.setItem('tb_f_v13', JSON.stringify(foods));
+        document.getElementById('new-food-input').value = '';
+        renderFoodList();
     }
 
-    function saveProfile() {
-        prof = {
-            name: document.getElementById('in-name').value || 'Bubuzik',
-            g: document.getElementById('in-gender').value,
-            w: document.getElementById('in-weight').value || 0,
-            h: document.getElementById('in-height').value || 0,
-            b: document.getElementById('in-birth').value || '2025-06-01'
-        };
-        localStorage.setItem('tb_prof_v21', JSON.stringify(prof));
-        updateProf();
-        showMain();
+    function deleteItem(id) {
+        if(!confirm('Удалить продукт из списка?')) return;
+        foods[actC] = foods[actC].filter(f => f.id !== id);
+        localStorage.setItem('tb_f_v13', JSON.stringify(foods));
+        renderFoodList();
     }
 
-    function showMain() { 
-        document.getElementById('main-page').style.display='block'; 
-        document.getElementById('list-page').style.display='none'; 
-        document.getElementById('detail-page').style.display='none'; 
-        document.getElementById('profile-page').style.display='none'; 
+    function openD(id, name) {
+        curF=id; curR=''; document.getElementById('main-page').style.display='none'; 
+        document.getElementById('list-page').style.display='none'; document.getElementById('detail-page').style.display='block';
+        document.getElementById('f-name').innerText=name; document.getElementById('f-date').valueAsDate=new Date();
+        document.querySelectorAll('.reac-btn').forEach(b=>b.classList.remove('active')); renderH();
     }
 
-    function openProfile() {
-        document.getElementById('main-page').style.display='none';
-        document.getElementById('profile-page').style.display='block';
-        document.getElementById('in-name').value = prof.name;
-        document.getElementById('in-gender').value = prof.g;
-        document.getElementById('in-weight').value = prof.w;
-        document.getElementById('in-height').value = prof.h;
-        document.getElementById('in-birth').value = prof.b;
+    function setR(r) { curR=r; document.querySelectorAll('.reac-btn').forEach(b=>b.classList.remove('active')); document.getElementById('r-'+r).classList.add('active'); }
+
+    function saveE() {
+        if(!curR) return alert('Выберите реакцию!');
+        if(!db[curF]) db[curF]=[];
+        const dateVal = document.getElementById('f-date').value;
+        db[curF].unshift({
+            d: new Date(dateVal).toLocaleDateString('ru'),
+            ts: dateVal,
+            r: curR, 
+            n: document.getElementById('f-note').value
+        });
+        localStorage.setItem('tb_db_v13', JSON.stringify(db)); 
+        renderH(); renderHomeHistory();
     }
 
-    function closeDetail() { 
-        document.getElementById('detail-page').style.display='none'; 
-        openCat(activeCat); 
+    function renderH() {
+        document.getElementById('f-hist').innerHTML = (db[curF]||[]).map(h => `
+            <div style="background:var(--card); border-radius:18px; padding:15px; margin-bottom:10px; display:flex; align-items:center; gap:12px; border-left:4px solid var(--accent);">
+                <div style="font-size:26px">${h.r}</div>
+                <div><div style="font-weight:800; font-size:13px; color:var(--accent)">${h.d}</div><div style="font-size:13px; opacity:0.7">${h.n||''}</div></div>
+            </div>`).join('');
     }
+
+    function updateP() {
+        document.getElementById('d-name').innerText = prof.name;
+        document.getElementById('d-weight').innerText = prof.w + ' кг';
+        document.getElementById('d-height').innerText = prof.h + ' см';
+        const frame = document.getElementById('photo-frame');
+        if(prof.img) {
+            frame.innerHTML = `<img src="${prof.img}">`;
+        } else {
+            frame.innerHTML = `<span id="d-emoji">${prof.g === 'boy' ? '👦' : '👧'}</span>`;
+        }
+        const age = Math.floor((new Date() - new Date(prof.b)) / 2629746000);
+        document.getElementById('d-age').innerText = (age >= 0 ? age : 0) + ' мес';
+    }
+
+    function saveP() {
+        const file = document.getElementById('p-img').files[0];
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                prof.img = e.target.result;
+                finalizeSaveP();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            finalizeSaveP();
+        }
+    }
+
+    function finalizeSaveP() {
+        prof.name = document.getElementById('p-name').value;
+        prof.g = document.getElementById('p-gen').value;
+        prof.w = document.getElementById('p-w').value;
+        prof.h = document.getElementById('p-h').value;
+        prof.b = document.getElementById('p-b').value;
+        localStorage.setItem('tb_pr_v13', JSON.stringify(prof));
+        updateP(); showMain();
+    }
+
+    function showMain() { document.getElementById('main-page').style.display='block'; ['list-page','detail-page','profile-page'].forEach(p=>document.getElementById(p).style.display='none'); }
+    function openProfile() { 
+        document.getElementById('main-page').style.display='none'; document.getElementById('profile-page').style.display='block';
+        ['p-name','p-gen','p-w','p-h','p-b'].forEach(id => document.getElementById(id).value = prof[id.split('-')[1]]);
+    }
+    function closeDetail() { document.getElementById('detail-page').style.display='none'; openC(actC); }
 </script>
 </body>
 </html>
