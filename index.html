@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TinyBites - Baby Tracker Pro</title>
-    <link rel="icon" href="icon.png" type="image/png">
-    <link rel="apple-touch-icon" href="icon.png">
-    <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#007AFF">
+    <title>TinyBites - Baby Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -28,42 +24,46 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* Baby Profile Card */
+        /* Профиль на главной */
         .baby-card { 
             background: white; border-radius: 28px; padding: 20px; margin-bottom: 25px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 15px;
-            cursor: pointer;
+            cursor: pointer; border: 1px solid rgba(0,0,0,0.02);
         }
-        .baby-avatar { font-size: 45px; background: #F2F2F7; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; border-radius: 22px; }
+        .baby-photo { 
+            width: 75px; height: 75px; border-radius: 24px; background: #F2F2F7; 
+            display: flex; align-items: center; justify-content: center; font-size: 40px;
+            overflow: hidden; object-fit: cover;
+        }
         .baby-info h2 { margin: 0; font-size: 20px; font-weight: 850; }
         .baby-info p { margin: 4px 0 0; color: var(--gray); font-size: 14px; font-weight: 600; }
         .baby-stats-mini { display: flex; gap: 8px; margin-top: 8px; }
         .stat-tag { background: #EBF5FF; padding: 4px 10px; border-radius: 10px; font-size: 11px; font-weight: 800; color: var(--accent); }
 
-        /* Categories Grid */
+        /* Сетка категорий */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .cat-card { border-radius: 28px; padding: 25px 15px; text-align: center; border: none; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .cat-card:active { transform: scale(0.94); }
+        .cat-card { border-radius: 28px; padding: 25px 15px; text-align: center; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .cat-icon { font-size: 40px; display: block; margin-bottom: 8px; }
         .cat-name { font-size: 15px; font-weight: 800; color: #3A3A3C; }
 
-        /* Items List */
-        .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn-plus { background: var(--accent); color: white; width: 40px; height: 40px; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; }
-        .item { display: flex; align-items: center; padding: 18px 20px; border-bottom: 0.5px solid #F2F2F7; background: white; margin-bottom: 1px; }
+        /* Список */
+        .item { display: flex; align-items: center; padding: 18px 20px; background: white; border-bottom: 0.5px solid #F2F2F7; }
         .item:first-child { border-radius: 22px 22px 0 0; }
         .item:last-child { border-radius: 0 0 22px 22px; border-bottom: none; }
         .item-name { flex: 1; font-size: 17px; font-weight: 700; }
 
-        /* Profile Inputs */
+        /* Поля ввода */
         .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 13px; font-weight: 800; margin-bottom: 8px; color: var(--gray); }
-        .input-group input { width: 100%; padding: 16px; border-radius: 18px; border: 1px solid var(--border); font-size: 16px; box-sizing: border-box; font-family: inherit; font-weight: 600; }
-        
-        .btn-save { background: var(--accent); color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 850; width: 100%; font-size: 18px; margin-top: 20px; }
+        .input-group label { display: block; font-size: 13px; font-weight: 800; margin-bottom: 8px; color: var(--gray); margin-left: 5px; }
+        .input-group input, .input-group select, .notes-area { 
+            width: 100%; padding: 16px; border-radius: 18px; border: 1.5px solid var(--border); 
+            font-size: 16px; font-weight: 600; box-sizing: border-box; font-family: inherit; outline: none;
+        }
+        .notes-area { min-height: 100px; resize: none; margin-top: 10px; background: white; }
 
-        /* Utility */
+        .btn-save { background: var(--accent); color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 850; width: 100%; font-size: 18px; }
         .back-nav { color: var(--accent); font-size: 17px; cursor: pointer; margin: 20px 0; display: inline-block; font-weight: 700; }
+
         .cat-Veg { background-color: #E8F5E9; } .cat-Fruit { background-color: #FCE4EC; }
         .cat-Grain { background-color: #FFF3E0; } .cat-Fish { background-color: #E1F5FE; }
         .cat-Meat { background-color: #FBE9E7; } .cat-Dairy { background-color: #F3E5F5; }
@@ -80,126 +80,149 @@
 
 <div id="main-page">
     <div class="app-logo">TinyBites</div>
-    
     <div class="baby-card" onclick="openProfile()">
-        <div class="baby-avatar">👶</div>
+        <div id="disp-photo-cont" class="baby-photo">👶</div>
         <div class="baby-info">
             <h2 id="disp-name">Bubuzik</h2>
             <p id="disp-age">0 мес.</p>
             <div class="baby-stats-mini">
-                <span class="stat-tag" id="disp-weight">0 kg</span>
-                <span class="stat-tag" id="disp-height">0 cm</span>
+                <span class="stat-tag" id="disp-weight">0 кг</span>
+                <span class="stat-tag" id="disp-height">0 см</span>
             </div>
         </div>
     </div>
-
     <div class="grid" id="categories-grid"></div>
 </div>
 
+<div id="profile-page" style="display:none">
+    <div class="back-nav" onclick="showMain()">❮ Назад</div>
+    <h1 style="font-weight:900">Профиль</h1>
+    
+    <div class="input-group" style="text-align:center;">
+        <div id="profile-photo-preview" class="baby-photo" style="margin: 0 auto 10px; cursor:pointer;" onclick="document.getElementById('in-photo').click()">👶</div>
+        <input type="file" id="in-photo" hidden accept="image/*" onchange="handlePhoto(this)">
+        <label id="lbl-photo-hint">Нажмите на фото, чтобы изменить</label>
+    </div>
+
+    <div class="input-group"><label id="lbl-name">Имя</label><input type="text" id="in-name"></div>
+    <div class="input-group">
+        <label id="lbl-gender">Пол</label>
+        <select id="in-gender">
+            <option value="boy">Мальчик</option>
+            <option value="girl">Девочка</option>
+        </select>
+    </div>
+    <div class="input-group"><label id="lbl-birth">Дата рождения</label><input type="date" id="in-birth"></div>
+    <div style="display:flex; gap:15px;">
+        <div class="input-group" style="flex:1;"><label id="lbl-weight">Вес (кг)</label><input type="number" id="in-weight" step="0.1"></div>
+        <div class="input-group" style="flex:1;"><label id="lbl-height">Рост (см)</label><input type="number" id="in-height"></div>
+    </div>
+    <button class="btn-save" onclick="saveProfile()" id="ui-save">Сохранить</button>
+</div>
+
 <div id="list-page" style="display:none">
-    <div class="back-nav" onclick="showMain()">❮ Categories</div>
-    <div class="list-header">
-        <h1 id="category-title" style="margin:0; font-weight:900">Food</h1>
-        <button class="btn-plus" onclick="addUserProduct()">+</button>
+    <div class="back-nav" onclick="showMain()">❮ Категории</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h1 id="category-title" style="margin:0; font-weight:900">Еда</h1>
+        <button onclick="addUserProduct()" style="background:var(--accent); color:white; width:40px; height:40px; border-radius:50%; border:none; font-size:24px;">+</button>
     </div>
     <div id="main-list"></div>
 </div>
 
 <div id="detail-page" style="display:none">
-    <div class="back-nav" onclick="closeDetail()">❮ Back</div>
-    <h2 id="detail-product-name" style="text-align:center; font-weight:900; font-size:32px;">Product</h2>
-    <div style="font-size:80px; font-weight:900; text-align:center; color:var(--accent); margin:10px 0;" id="day-num">0</div>
+    <div class="back-nav" onclick="closeDetail()">❮ Назад</div>
+    <h2 id="detail-product-name" style="text-align:center; font-weight:900; font-size:32px; margin-bottom:5px;">Продукт</h2>
+    <div style="font-size:70px; font-weight:900; text-align:center; color:var(--accent); margin-bottom:20px;" id="day-num">0</div>
     
-    <div style="text-align:center; font-weight:800; margin-bottom:20px;" id="ui-how">How was it?</div>
-    <div style="display:flex; gap:12px; justify-content:center; margin-bottom:40px;">
+    <div style="text-align:center; font-weight:800; margin-bottom:20px;" id="ui-how">Как всё прошло?</div>
+    <div style="display:flex; gap:12px; justify-content:center; margin-bottom:30px;">
         <button onclick="addFeeding('🤮')" style="border:none; background:white; padding:15px; border-radius:22px; font-size:35px; box-shadow:0 4px 10px rgba(0,0,0,0.05)">🤮</button>
         <button onclick="addFeeding('😐')" style="border:none; background:white; padding:15px; border-radius:22px; font-size:35px; box-shadow:0 4px 10px rgba(0,0,0,0.05)">😐</button>
         <button onclick="addFeeding('😊')" style="border:none; background:white; padding:15px; border-radius:22px; font-size:35px; box-shadow:0 4px 10px rgba(0,0,0,0.05)">😊</button>
         <button onclick="addFeeding('🤩')" style="border:none; background:white; padding:15px; border-radius:22px; font-size:35px; box-shadow:0 4px 10px rgba(0,0,0,0.05)">🤩</button>
     </div>
-    
-    <div id="history-list" style="display:flex; gap:12px; overflow-x:auto; padding:5px;"></div>
-</div>
 
-<div id="profile-page" style="display:none">
-    <div class="back-nav" onclick="showMain()">❮ Back</div>
-    <h1 style="font-weight:900">Profile</h1>
-    <div class="input-group"><label>Name</label><input type="text" id="in-name"></div>
-    <div class="input-group"><label>Birthday</label><input type="date" id="in-birth"></div>
-    <div class="input-group"><label>Weight (kg)</label><input type="number" id="in-weight" step="0.1"></div>
-    <div class="input-group"><label>Height (cm)</label><input type="number" id="in-height"></div>
-    <button class="btn-save" onclick="saveProfile()">Save Profile</button>
+    <div style="font-weight:800; margin-bottom:10px;" id="ui-notes-label">Заметки:</div>
+    <textarea class="notes-area" id="food-notes" oninput="saveFoodNotes()" placeholder="Напишите здесь..."></textarea>
+    
+    <div style="font-weight:800; margin: 25px 0 10px;" id="ui-history">История:</div>
+    <div id="history-list" style="display:flex; gap:12px; overflow-x:auto; padding:5px;"></div>
 </div>
 
 <script>
     const i18n = {
-        ru: { age: "мес.", cats: { 'Veg':'Овощи', 'Fruit':'Фрукты', 'Grain':'Крупы', 'Fish':'Рыба', 'Meat':'Мясо', 'Dairy':'Молочка', 'Herb':'Зелень', 'Other':'Прочее' } },
-        en: { age: "mo.", cats: { 'Veg':'Vegetables', 'Fruit':'Fruits', 'Grain':'Grains', 'Fish':'Fish', 'Meat':'Meat', 'Dairy':'Dairy', 'Herb':'Herbs', 'Other':'Others' } },
-        tr: { age: "ay", cats: { 'Veg':'Sebzeler', 'Fruit':'Meyveler', 'Grain':'Tahıllar', 'Fish':'Balık', 'Meat':'Et', 'Dairy':'Süt Ürünleri', 'Herb':'Yeşillik', 'Other':'Diğer' } }
+        ru: { age: "мес.", weight: "кг", height: "см", photoHint: "Нажмите, чтобы изменить", how: "Как всё прошло сегодня?", history: "История:", notes: "Заметки:", cats: { 'Veg':'Овощи', 'Fruit':'Фрукты', 'Grain':'Крупы', 'Fish':'Рыба', 'Meat':'Мясо', 'Dairy':'Молочка', 'Herb':'Зелень', 'Other':'Прочее' } },
+        en: { age: "mo.", weight: "kg", height: "cm", photoHint: "Tap to change photo", how: "How was it today?", history: "History:", notes: "Notes:", cats: { 'Veg':'Vegetables', 'Fruit':'Fruits', 'Grain':'Grains', 'Fish':'Fish', 'Meat':'Meat', 'Dairy':'Dairy', 'Herb':'Herbs', 'Other':'Others' } },
+        tr: { age: "ay", weight: "kg", height: "cm", photoHint: "Fotoğrafı değiştirmek için dokun", how: "Bugün nasıldı?", history: "Geçmiş:", notes: "Notlar:", cats: { 'Veg':'Sebzeler', 'Fruit':'Meyveler', 'Grain':'Tahıllar', 'Fish':'Balık', 'Meat':'Et', 'Dairy':'Süt Ürünleri', 'Herb':'Yeşillik', 'Other':'Diğer' } }
     };
 
-    const FULL_PRODUCTS = {
-        'Veg': [
-            {id:'broccoli', ru:'Брокколи', en:'Broccoli', tr:'Brokoli'}, {id:'carrot', ru:'Морковь', en:'Carrot', tr:'Havuç'},
-            {id:'pumpkin', ru:'Тыква', en:'Pumpkin', tr:'Kabak'}, {id:'zucchini', ru:'Кабачок', en:'Zucchini', tr:'Kabak'},
-            {id:'potato', ru:'Картофель', en:'Potato', tr:'Patates'}, {id:'cauli', ru:'Цв. капуста', en:'Cauliflower', tr:'Karnabahar'},
-            {id:'spinach', ru:'Шпинат', en:'Spinach', tr:'Ispanak'}, {id:'beet', ru:'Свекла', en:'Beetroot', tr:'Pancar'}
-        ],
-        'Fruit': [
-            {id:'apple', ru:'Яблоко', en:'Apple', tr:'Elma'}, {id:'banana', ru:'Банан', en:'Banana', tr:'Muz'},
-            {id:'pear', ru:'Груша', en:'Pear', tr:'Armut'}, {id:'avocado', ru:'Авокадо', en:'Avocado', tr:'Avokado'},
-            {id:'peach', ru:'Персик', en:'Peach', tr:'Şeftali'}, {id:'plum', ru:'Слива', en:'Plum', tr:'Erik'}
-        ],
-        'Grain': [
-            {id:'rice', ru:'Рис', en:'Rice', tr:'Pirinç'}, {id:'buck', ru:'Гречка', en:'Buckwheat', tr:'Karabuğday'},
-            {id:'corn', ru:'Кукуруза', en:'Corn', tr:'Mısır'}, {id:'oats', ru:'Овсянка', en:'Oats', tr:'Yulaf'}
-        ],
-        'Meat': [
-            {id:'turkey', ru:'Индейка', en:'Turkey', tr:'Hindi'}, {id:'rabbit', ru:'Кролик', en:'Rabbit', tr:'Tavşan'},
-            {id:'beef', ru:'Говядина', en:'Beef', tr:'Dana Eti'}, {id:'chicken', ru:'Курица', en:'Chicken', tr:'Tavuk'}
-        ],
-        'Fish': [
-            {id:'salmon', ru:'Лосось', en:'Salmon', tr:'Somon'}, {id:'cod', ru:'Треска', en:'Cod', tr:'Morina'}
-        ],
-        'Dairy': [
-            {id:'yogurt', ru:'Йогурт', en:'Yogurt', tr:'Yoğurt'}, {id:'cottage', ru:'Творог', en:'Cottage', tr:'Lor'}
-        ],
-        'Herb': [{id:'dill', ru:'Укроп', en:'Dill', tr:'Dereotu'}, {id:'pars', ru:'Петрушка', en:'Parsley', tr:'Maydanoz'}],
-        'Other': [{id:'egg', ru:'Яйцо', en:'Egg', tr:'Yumurta'}, {id:'oil', ru:'Масло', en:'Oil', tr:'Yağ'}]
+    const PRODUCTS = {
+        'Veg': [{id:'br', ru:'Брокколи', en:'Broccoli', tr:'Brokoli'}, {id:'ca', ru:'Морковь', en:'Carrot', tr:'Havuç'}, {id:'pu', ru:'Тыква', en:'Pumpkin', tr:'Kabak'}],
+        'Fruit': [{id:'ap', ru:'Яблоко', en:'Apple', tr:'Elma'}, {id:'ba', ru:'Банан', en:'Banana', tr:'Muz'}],
+        'Grain': [{id:'ri', ru:'Рис', en:'Rice', tr:'Pirinç'}, {id:'bu', ru:'Гречка', en:'Buckwheat', tr:'Karabuğday'}]
+        // ... можно добавить остальные
     };
 
     let currentLang = localStorage.getItem('bt_lang') || 'ru';
-    let db = JSON.parse(localStorage.getItem('bt_db_v9')) || {};
-    let profile = JSON.parse(localStorage.getItem('bt_prof')) || {name:'Bubuzik', birth:'2025-06-14', weight:9, height:72};
-    let userAdded = JSON.parse(localStorage.getItem('bt_user_added')) || {};
+    let db = JSON.parse(localStorage.getItem('bt_db_v11')) || {};
+    let profile = JSON.parse(localStorage.getItem('bt_prof_v11')) || {name:'Bubuzik', gender:'boy', birth:'2025-06-01', weight:9, height:72, photo:''};
+    let userAdded = JSON.parse(localStorage.getItem('bt_user_v11')) || {};
     let activeCat = '', currentFoodId = '';
 
     function setLanguage(lang) {
         currentLang = lang; localStorage.setItem('bt_lang', lang);
         document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('btn-' + lang).classList.add('active');
-        renderCategories();
-        updateProfileDisplay();
+        document.getElementById('ui-how').innerText = i18n[lang].how;
+        document.getElementById('ui-notes-label').innerText = i18n[lang].notes;
+        document.getElementById('ui-history').innerText = i18n[lang].history;
+        renderCategories(); updateProfileDisplay();
+    }
+
+    function handlePhoto(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profile.photo = e.target.result;
+                document.getElementById('profile-photo-preview').innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function saveProfile() {
+        profile.name = document.getElementById('in-name').value;
+        profile.gender = document.getElementById('in-gender').value;
+        profile.birth = document.getElementById('in-birth').value;
+        profile.weight = document.getElementById('in-weight').value;
+        profile.height = document.getElementById('in-height').value;
+        localStorage.setItem('bt_prof_v11', JSON.stringify(profile));
+        updateProfileDisplay(); showMain();
+    }
+
+    function updateProfileDisplay() {
+        document.getElementById('disp-name').innerText = profile.name;
+        document.getElementById('disp-weight').innerText = profile.weight + ' ' + i18n[currentLang].weight;
+        document.getElementById('disp-height').innerText = profile.height + ' ' + i18n[currentLang].height;
+        
+        // Фото или иконка пола
+        const avatarHtml = profile.photo ? `<img src="${profile.photo}" style="width:100%; height:100%; object-fit:cover;">` : (profile.gender === 'boy' ? '👦' : '👧');
+        document.getElementById('disp-photo-cont').innerHTML = avatarHtml;
+        document.getElementById('profile-photo-preview').innerHTML = avatarHtml;
+
+        const birth = new Date(profile.birth); const today = new Date();
+        const months = (today.getFullYear() - birth.getFullYear()) * 12 + (today.getMonth() - birth.getMonth());
+        document.getElementById('disp-age').innerText = months + ' ' + i18n[currentLang].age;
     }
 
     function renderCategories() {
         const grid = document.getElementById('categories-grid');
-        const cats = [
-            {id:'Veg', icon:'🥦'}, {id:'Fruit', icon:'🍎'}, {id:'Grain', icon:'🌾'},
-            {id:'Fish', icon:'🐟'}, {id:'Meat', icon:'🥩'}, {id:'Dairy', icon:'🥛'},
-            {id:'Herb', icon:'🌿'}, {id:'Other', icon:'🥜'}
-        ];
-        grid.innerHTML = cats.map(c => `
-            <button class="cat-card cat-${c.id}" onclick="openCategory('${c.id}')">
-                <span class="cat-icon">${c.icon}</span>
-                <span class="cat-name">${i18n[currentLang].cats[c.id]}</span>
-            </button>
-        `).join('');
+        const cats = [{id:'Veg', icon:'🥦'}, {id:'Fruit', icon:'🍎'}, {id:'Grain', icon:'🌾'}, {id:'Meat', icon:'🥩'}, {id:'Fish', icon:'🐟'}, {id:'Dairy', icon:'🥛'}, {id:'Herb', icon:'🌿'}, {id:'Other', icon:'🥜'}];
+        grid.innerHTML = cats.map(c => `<button class="cat-card cat-${c.id}" onclick="openCategory('${c.id}')"><span class="cat-icon">${c.icon}</span><span class="cat-name">${i18n[currentLang].cats[c.id]}</span></button>`).join('');
     }
 
     function openCategory(id) {
-        activeCat = id;
-        document.getElementById('main-page').style.display = 'none';
+        activeCat = id; document.getElementById('main-page').style.display = 'none';
         document.getElementById('list-page').style.display = 'block';
         document.getElementById('category-title').innerText = i18n[currentLang].cats[id];
         renderList();
@@ -207,49 +230,40 @@
 
     function renderList() {
         const list = document.getElementById('main-list');
-        const items = [...(FULL_PRODUCTS[activeCat] || []), ...(userAdded[activeCat] || [])];
+        const items = [...(PRODUCTS[activeCat] || []), ...(userAdded[activeCat] || [])];
         list.innerHTML = items.map(p => {
             const data = db[p.id] || {days:0, history:[]};
-            const emoji = data.history.length > 0 ? data.history[0].emoji : '⚪';
             return `<div class="item" onclick="openDetail('${p.id}', '${p[currentLang] || p.name}')">
                 <div class="item-name">${p[currentLang] || p.name}</div>
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <span style="font-size:20px">${emoji}</span>
-                    <span style="color:var(--accent); font-weight:800; min-width:35px; text-align:right;">${data.days}d</span>
-                </div>
+                <div style="color:var(--accent); font-weight:800;">${data.days} дн.</div>
             </div>`;
         }).join('');
     }
 
-    function addUserProduct() {
-        const name = prompt(currentLang === 'ru' ? 'Название продукта:' : 'Product Name:');
-        if(name) {
-            const id = 'u' + Date.now();
-            if(!userAdded[activeCat]) userAdded[activeCat] = [];
-            userAdded[activeCat].push({id, name});
-            localStorage.setItem('bt_user_added', JSON.stringify(userAdded));
-            renderList();
-        }
-    }
-
     function openDetail(id, name) {
-        currentFoodId = id;
-        const data = db[id] || {days:0, history:[]};
+        currentFoodId = id; const data = db[id] || {days:0, history:[], notes:''};
         document.getElementById('list-page').style.display = 'none';
         document.getElementById('detail-page').style.display = 'block';
         document.getElementById('detail-product-name').innerText = name;
         document.getElementById('day-num').innerText = data.days;
+        document.getElementById('food-notes').value = data.notes || '';
         updateHistoryUI(data.history);
     }
 
     function addFeeding(emoji) {
-        if(!db[currentFoodId]) db[currentFoodId] = {days:0, history:[]};
+        if(!db[currentFoodId]) db[currentFoodId] = {days:0, history:[], notes:''};
         db[currentFoodId].days++;
         const date = new Date().toLocaleDateString(currentLang, {day:'numeric', month:'short'});
         db[currentFoodId].history.unshift({date, emoji});
-        localStorage.setItem('bt_db_v9', JSON.stringify(db));
+        localStorage.setItem('bt_db_v11', JSON.stringify(db));
         document.getElementById('day-num').innerText = db[currentFoodId].days;
         updateHistoryUI(db[currentFoodId].history);
+    }
+
+    function saveFoodNotes() {
+        if(!db[currentFoodId]) db[currentFoodId] = {days:0, history:[], notes:''};
+        db[currentFoodId].notes = document.getElementById('food-notes').value;
+        localStorage.setItem('bt_db_v11', JSON.stringify(db));
     }
 
     function updateHistoryUI(history) {
@@ -261,38 +275,27 @@
         `).join('');
     }
 
-    function openProfile() {
-        document.getElementById('main-page').style.display = 'none';
-        document.getElementById('profile-page').style.display = 'block';
+    function addUserProduct() {
+        const name = prompt(currentLang === 'ru' ? 'Название продукта:' : 'Product Name:');
+        if(name) {
+            const id = 'u' + Date.now();
+            if(!userAdded[activeCat]) userAdded[activeCat] = [];
+            userAdded[activeCat].push({id, name});
+            localStorage.setItem('bt_user_v11', JSON.stringify(userAdded));
+            renderList();
+        }
+    }
+
+    function showMain() { document.getElementById('main-page').style.display='block'; document.getElementById('list-page').style.display='none'; document.getElementById('profile-page').style.display='none'; }
+    function openProfile() { 
+        document.getElementById('main-page').style.display='none'; 
+        document.getElementById('profile-page').style.display='block';
         document.getElementById('in-name').value = profile.name;
+        document.getElementById('in-gender').value = profile.gender;
         document.getElementById('in-birth').value = profile.birth;
         document.getElementById('in-weight').value = profile.weight;
         document.getElementById('in-height').value = profile.height;
     }
-
-    function saveProfile() {
-        profile = {
-            name: document.getElementById('in-name').value,
-            birth: document.getElementById('in-birth').value,
-            weight: document.getElementById('in-weight').value,
-            height: document.getElementById('in-height').value
-        };
-        localStorage.setItem('bt_prof', JSON.stringify(profile));
-        updateProfileDisplay();
-        showMain();
-    }
-
-    function updateProfileDisplay() {
-        document.getElementById('disp-name').innerText = profile.name;
-        document.getElementById('disp-weight').innerText = profile.weight + ' kg';
-        document.getElementById('disp-height').innerText = profile.height + ' cm';
-        const birth = new Date(profile.birth);
-        const today = new Date();
-        const months = (today.getFullYear() - birth.getFullYear()) * 12 + (today.getMonth() - birth.getMonth());
-        document.getElementById('disp-age').innerText = months + ' ' + i18n[currentLang].age;
-    }
-
-    function showMain() { document.getElementById('main-page').style.display='block'; document.getElementById('list-page').style.display='none'; document.getElementById('profile-page').style.display='none'; }
     function closeDetail() { document.getElementById('detail-page').style.display='none'; document.getElementById('list-page').style.display='block'; renderList(); }
 
     setLanguage(currentLang);
