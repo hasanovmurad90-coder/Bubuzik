@@ -17,7 +17,7 @@
             --cat-dairy: #EDEBF5; --cat-dairy-t: #625E91;
             --cat-herb: #F0F5E6; --cat-herb-t: #6B804D;
             --cat-other: #FDF9E6; --cat-other-t: #A3934F;
-            --cat-spice: #FDF0E6; --cat-spice-t: #A3644F; /* Новая категория: Приправы */
+            --cat-spice: #FDF0E6; --cat-spice-t: #A3644F;
         }
         [data-theme="dark"] {
             --bg: #000000; --card: #1C1C1E; --text: #FFFFFF; --border: #38383A;
@@ -57,9 +57,9 @@
         .section-title { font-size: 13px; font-weight: 900; color: var(--gray); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
         .history-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
         .history-scroll::-webkit-scrollbar { display: none; }
-        .history-chip { background: var(--card); padding: 12px 16px; border-radius: 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border); cursor: pointer; }
+        .history-chip { background: var(--card); padding: 12px 16px; border-radius: 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border); cursor: pointer; transition: 0.3s; }
 
-        /* Сетка категорий (ЗНАЧКИ УВЕЛИЧЕНЫ) */
+        /* Сетка категорий */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .cat-card { height: 160px; border-radius: 30px; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: 0 8px 20px rgba(0,0,0,0.04); }
         .cat-icon { font-size: 64px; margin-bottom: 8px; }
@@ -90,8 +90,7 @@
         .add-input, .search-input { flex: 1; border: none; background: transparent; font-family: inherit; font-size: 16px; font-weight: 600; outline: none; color: var(--text); }
 
         .reac-row { display: flex; gap: 8px; margin: 15px 0 20px; }
-        .reac-btn { flex: 1; height: 50px; border-radius: 14px; border: 2px solid transparent; background: var(--bg); font-size: 24px; cursor: pointer; }
-        .reac-btn.active { border-color: var(--accent); background: var(--card); }
+        .reac-btn { flex: 1; height: 50px; border-radius: 14px; border: 2px solid transparent; background: var(--bg); font-size: 24px; cursor: pointer; transition: 0.2s; }
 
         .btn-main { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 20px; width: 100%; font-size: 17px; font-weight: 800; cursor: pointer; margin-top: 10px; }
         .back-nav { color: var(--accent); font-size: 17px; font-weight: 700; margin: 15px 0; display: inline-block; cursor: pointer; }
@@ -99,7 +98,7 @@
         input[type="text"], input[type="number"], input[type="date"], select, textarea { background: var(--card); color: var(--text); border: 1.5px solid var(--border); padding: 14px; border-radius: 14px; width: 100%; box-sizing: border-box; font-size: 16px; margin-bottom: 12px; font-family: inherit; }
         label { font-size: 11px; font-weight: 900; color: var(--gray); text-transform: uppercase; margin-bottom: 5px; display: block; margin-left: 5px; }
 
-        /* Уведомление с приятными словами */
+        /* Уведомление */
         .love-toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #FF2D55; color: white; padding: 12px 25px; border-radius: 30px; font-weight: 800; z-index: 10000; box-shadow: 0 10px 20px rgba(255,45,85,0.3); display: none; text-align: center; white-space: nowrap; animation: slideDown 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
         @keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 30px; opacity: 1; } }
     </style>
@@ -204,6 +203,10 @@
 </div>
 
 <script>
+    // Цвета для подсветки реакций
+    const R_COLORS = { '🔴': '#FF3B30', '🟡': '#FFCC00', '🟢': '#34C759', '✨': '#AF52DE' };
+    const R_BGS = { '🔴': 'rgba(255, 59, 48, 0.12)', '🟡': 'rgba(255, 204, 0, 0.18)', '🟢': 'rgba(52, 199, 89, 0.12)', '✨': 'rgba(175, 82, 222, 0.12)' };
+
     // База UI переводов
     const UI = {
         back: { RU: '❮ Назад', EN: '❮ Back', TR: '❮ Geri' },
@@ -233,14 +236,12 @@
         month: { RU: 'мес', EN: 'mo', TR: 'ay' }
     };
 
-    // Приятные слова
     const loveWords = {
         RU: ["Я тебя люблю! ❤️", "Ты моё солнышко! ☀️", "Моя радость! 🥰", "Расти большим! 🌱", "Сладкий малыш! 🍼", "Горжусь тобой! 🌟", "Чудо моё! ✨"],
         EN: ["I love you! ❤️", "You're my sunshine! ☀️", "My joy! 🥰", "Grow big & strong! 🌱", "Sweet baby! 🍼", "So proud of you! 🌟", "My little miracle! ✨"],
         TR: ["Seni seviyorum! ❤️", "Sen benim güneşimsin! ☀️", "Benim neşem! 🥰", "Büyü ve güçlen! 🌱", "Tatlı bebek! 🍼", "Seninle gurur duyuyorum! 🌟", "Benim mucizem! ✨"]
     };
 
-    // Категории
     const CATS = [
         {id:'Veg', RU:'Овощи', EN:'Vegetables', TR:'Sebzeler', i:'🥦'}, 
         {id:'Fruit', RU:'Фрукты', EN:'Fruits', TR:'Meyveler', i:'🍎'}, 
@@ -253,7 +254,6 @@
         {id:'Other', RU:'Масла, орехи и прочее', EN:'Oils, Nuts & Other', TR:'Yağlar, Kuruyemiş ve Diğer', i:'🥜'}
     ];
 
-    // Продукты с переводами (Версия 14)
     const DEFAULT_FOODS = {
         'Veg': [{id:'v1',RU:'Кабачок',EN:'Zucchini',TR:'Kabak',e:'🥒'},{id:'v2',RU:'Брокколи',EN:'Broccoli',TR:'Brokoli',e:'🥦'},{id:'v3',RU:'Цветная капуста',EN:'Cauliflower',TR:'Karnabahar',e:'🥗'},{id:'v4',RU:'Морковь',EN:'Carrot',TR:'Havuç',e:'🥕'},{id:'v5',RU:'Тыква',EN:'Pumpkin',TR:'Balkabağı',e:'🎃'},{id:'v6',RU:'Картофель',EN:'Potato',TR:'Patates',e:'🥔'},{id:'v7',RU:'Батат',EN:'Sweet Potato',TR:'Tatlı Patates',e:'🍠'},{id:'v8',RU:'Горошек',EN:'Peas',TR:'Bezelye',e:'🟢'},{id:'v9',RU:'Стручковая фасоль',EN:'Green Beans',TR:'Yeşil Fasulye',e:'🌱'},{id:'v10',RU:'Кукуруза',EN:'Corn',TR:'Mısır',e:'🌽'}],
         'Fruit': [{id:'f1',RU:'Яблоко',EN:'Apple',TR:'Elma',e:'🍎'},{id:'f2',RU:'Груша',EN:'Pear',TR:'Armut',e:'🍐'},{id:'f3',RU:'Банан',EN:'Banana',TR:'Muz',e:'🍌'},{id:'f4',RU:'Черника',EN:'Blueberry',TR:'Yaban Mersini',e:'🫐'},{id:'f5',RU:'Персик',EN:'Peach',TR:'Şeftali',e:'🍑'},{id:'f6',RU:'Абрикос',EN:'Apricot',TR:'Kayısı',e:'🍑'},{id:'f8',RU:'Авокадо',EN:'Avocado',TR:'Avokado',e:'🥑'},{id:'f9',RU:'Манго',EN:'Mango',TR:'Mango',e:'🥭'},{id:'f10',RU:'Клубника',EN:'Strawberry',TR:'Çilek',e:'🍓'}],
@@ -266,7 +266,6 @@
         'Other': [{id:'o2',RU:'Оливковое масло',EN:'Olive Oil',TR:'Zeytinyağı',e:'🫗'},{id:'o3',RU:'Подсолнечное масло',EN:'Sunflower Oil',TR:'Ayçiçek Yağı',e:'🌻'},{id:'o5',RU:'Арахисовая паста',EN:'Peanut Butter',TR:'Fıstık Ezmesi',e:'🥜'},{id:'o6',RU:'Грецкий орех',EN:'Walnut',TR:'Ceviz',e:'🧠'}]
     };
 
-    // Состояния
     let curL = localStorage.getItem('tb_l_v14') || 'RU';
     let dark = localStorage.getItem('tb_d_v14') === 'true';
     let db = JSON.parse(localStorage.getItem('tb_db_v14')) || {};
@@ -309,7 +308,6 @@
 
     function applyL() { 
         document.getElementById('l-btn').innerText = curL; 
-        // Обновление статических текстов
         document.getElementById('ui-hist-title').innerText = UI.histTitle[curL];
         document.getElementById('new-food-input').placeholder = UI.addPlace[curL];
         document.getElementById('search-input').placeholder = UI.searchPlace[curL];
@@ -359,12 +357,15 @@
         }
         hist.sort((a,b) => new Date(b.ts) - new Date(a.ts));
         const last = hist.slice(0, 5);
-        document.getElementById('main-history-list').innerHTML = last.length ? last.map(h => `
-            <div class="history-chip" onclick="openD('${h.id}', '${h.name}', 'main-page')">
+        document.getElementById('main-history-list').innerHTML = last.length ? last.map(h => {
+            const col = R_COLORS[h.r] || 'var(--accent)';
+            const bg = R_BGS[h.r] || 'var(--card)';
+            return `
+            <div class="history-chip" style="background:${bg}; border-color:${col};" onclick="openD('${h.id}', '${h.name}', 'main-page')">
                 <span>${h.r}</span>
-                <span style="font-weight:700; font-size:13px;">${h.name}</span>
-            </div>
-        `).join('') : `<div style="opacity:0.4; font-size:12px; padding:10px;">${UI.emptyHist[curL]}</div>`;
+                <span style="font-weight:700; font-size:13px; color:${col};">${h.name}</span>
+            </div>`;
+        }).join('') : `<div style="opacity:0.4; font-size:12px; padding:10px;">${UI.emptyHist[curL]}</div>`;
     }
 
     function findFoodName(id) {
@@ -398,7 +399,6 @@
         const val = document.getElementById('new-food-input').value;
         if(!val) return;
         const newId = 'm_' + Date.now();
-        // При ручном добавлении записываем введенное имя для всех языков (пользовательский ввод)
         foods[actC].push({id: newId, RU: val, EN: val, TR: val, e: '🥣'});
         localStorage.setItem('tb_f_v14', JSON.stringify(foods));
         document.getElementById('new-food-input').value = '';
@@ -447,11 +447,32 @@
         document.getElementById('f-name').innerText=name; 
         document.getElementById('f-date').valueAsDate=new Date();
         document.getElementById('f-note').value='';
-        document.querySelectorAll('.reac-btn').forEach(b=>b.classList.remove('active')); 
+        
+        // Сбрасываем цвета кнопок
+        document.querySelectorAll('.reac-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.borderColor = 'transparent';
+            b.style.background = 'var(--bg)';
+        }); 
+        
         renderH();
     }
 
-    function setR(r) { curR=r; document.querySelectorAll('.reac-btn').forEach(b=>b.classList.remove('active')); document.getElementById('r-'+r).classList.add('active'); }
+    function setR(r) { 
+        curR = r; 
+        // Снимаем выделение со всех
+        document.querySelectorAll('.reac-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.borderColor = 'transparent';
+            b.style.background = 'var(--bg)';
+        }); 
+        
+        // Подсвечиваем активную кнопку её цветом
+        const btn = document.getElementById('r-' + r);
+        btn.classList.add('active'); 
+        btn.style.borderColor = R_COLORS[r];
+        btn.style.background = R_BGS[r];
+    }
 
     function saveE() {
         if(!curR) return alert(UI.errReac[curL]);
@@ -472,11 +493,16 @@
     }
 
     function renderH() {
-        document.getElementById('f-hist').innerHTML = (db[curF]||[]).map(h => `
-            <div style="background:var(--card); border-radius:18px; padding:15px; margin-bottom:10px; display:flex; align-items:center; gap:12px; border-left:4px solid var(--accent);">
+        document.getElementById('f-hist').innerHTML = (db[curF]||[]).map(h => {
+            // Подбираем цвет для конкретной карточки истории
+            const col = R_COLORS[h.r] || 'var(--accent)';
+            const bg = R_BGS[h.r] || 'var(--card)';
+            return `
+            <div style="background:${bg}; border-radius:18px; padding:15px; margin-bottom:10px; display:flex; align-items:center; gap:12px; border-left:4px solid ${col}; transition: 0.3s;">
                 <div style="font-size:26px">${h.r}</div>
-                <div><div style="font-weight:800; font-size:13px; color:var(--accent)">${h.d}</div><div style="font-size:13px; opacity:0.7">${h.n||''}</div></div>
-            </div>`).join('');
+                <div><div style="font-weight:800; font-size:13px; color:${col}">${h.d}</div><div style="font-size:13px; opacity:0.7">${h.n||''}</div></div>
+            </div>`;
+        }).join('');
     }
 
     function updateP() {
